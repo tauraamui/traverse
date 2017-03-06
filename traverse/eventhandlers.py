@@ -1,6 +1,7 @@
 from watchdog.events import FileSystemEventHandler
 import core
 import email
+import utils
 from traverse import users
 
 
@@ -11,8 +12,10 @@ class EmailNotificationHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         for user in users.load_all_users(core.DAT_FILE):
-            print user.username
-        print event
+            for dir_name in user.dirs_to_watch:
+                if dir_name in event.src_path:
+                    print utils.file_name_in_path(event.src_path)
+                    email.send_notification(user)
 
     def on_deleted(self, event):
         #print event

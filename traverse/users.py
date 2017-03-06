@@ -18,6 +18,6 @@ def load_all_users(data_file):
         for user_data in data["users"]:
             new_user.username = user_data["username"]
             new_user.email = user_data["email"]
-            new_user.folders = user_data["dirs_to_watch"]
+            new_user.dirs_to_watch = user_data["dirs_to_watch"]
             users.append(new_user)
     return users
