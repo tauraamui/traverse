@@ -1,28 +1,19 @@
-import sys
-import filesystem
+import json
+
 import eventhandlers
-from watchdog.observers import Observer
-from traverse import users
+from watchdog.events import FileSystemEventHandler
+
+import filesystem
 
 
-class Application(object):
-    def __init__(self):
-        self.dir_to_monitor = ""
-        self.observer = Observer()
+DAT_FILE = "traverse.dat"
 
-    def start(self):
-        self.load_params()
-        users
 
-    def load_params(self):
-        if len(sys.argv) > 1:
-            self.dir_to_monitor = sys.argv[1]
-        else:
-            print "Dir path param missing..."
-            exit(-1)
-
+def register_root():
+    with open(DAT_FILE) as data_file:
+        data = json.load(data_file)
+        filesystem.register_dir(data["root_dir"], eventhandlers.EmailNotificationHandler(FileSystemEventHandler()), True)
 
 if __name__ == "__main__":
-    users = users.load_all_users("traverse.dat")
-    app = Application()
-    app.start()
+    register_root()
+    filesystem.start_monitoring()
