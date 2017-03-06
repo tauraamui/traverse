@@ -1,9 +1,8 @@
-import logging
 import sys
-import time
-
+import filesystem
+import eventhandlers
 from watchdog.observers import Observer
-from eventhandlers import EmailNotificationHandler
+from traverse import users
 
 
 class Application(object):
@@ -13,8 +12,7 @@ class Application(object):
 
     def start(self):
         self.load_params()
-        self.register_dir()
-        self.start_monitoring()
+        users
 
     def load_params(self):
         if len(sys.argv) > 1:
@@ -23,23 +21,8 @@ class Application(object):
             print "Dir path param missing..."
             exit(-1)
 
-    def register_dir(self):
-        logging.basicConfig(level=logging.INFO,
-                            format='%(asctime)s - %(message)s',
-                            datefmt='%Y-%m-%d %H:%M:%S')
-        event_handler = EmailNotificationHandler()
-        self.observer.schedule(event_handler, self.dir_to_monitor, recursive=True)
-
-    def start_monitoring(self):
-        self.observer.start()
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            self.observer.stop()
-        self.observer.join()
-
 
 if __name__ == "__main__":
+    users = users.load_all_users("traverse.dat")
     app = Application()
     app.start()
