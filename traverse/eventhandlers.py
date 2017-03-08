@@ -3,12 +3,15 @@ import core
 import travemail
 import utils
 import users
+from filesystem import ChangeType
+from filesystem import Change
 
 
 class EmailNotificationHandler(FileSystemEventHandler):
 
     def __init__(self, emails_and_folders):
         self.emails_and_folders = emails_and_folders
+        self.travemail = travemail.Travemail()
 
     def on_created(self, event):
         for user in users.load_all_users(core.DAT_FILE):
@@ -16,7 +19,9 @@ class EmailNotificationHandler(FileSystemEventHandler):
                 if dir_name in event.src_path:
                     if user.username != utils.file_owner_name(event.src_path):
                         created_file_name = utils.file_name_in_path(event.src_path)
-                        travemail.send_new_file_notification(user, dir_name, created_file_name)
+                        new_change = Change(user, dir_name, created_file_name)
+                        new_change.type = ChangeType.CREATED
+                        self.travemail.cache_change(new_change)
 
     def on_deleted(self, event):
         #print event
@@ -25,3 +30,6 @@ class EmailNotificationHandler(FileSystemEventHandler):
     def on_modified(self, event):
         #print event
         pass
+
+    def update(self):
+        self.travemail.update()

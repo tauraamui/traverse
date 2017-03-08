@@ -7,11 +7,18 @@ import filesystem
 DAT_FILE = "traverse.dat"
 
 
-def register_root():
-    with open(DAT_FILE) as data_file:
-        data = json.load(data_file)
-        filesystem.register_dir(data["root_dir"], eventhandlers.EmailNotificationHandler(FileSystemEventHandler()), data["watch_subdirs"])
+class Application(object):
+
+    def __init__(self):
+        self.event_handler = eventhandlers.EmailNotificationHandler(FileSystemEventHandler())
+
+    def register_root(self):
+        with open(DAT_FILE) as data_file:
+            data = json.load(data_file)
+            filesystem.register_dir(data["root_dir"], self.event_handler, data["watch_subdirs"])
+
 
 if __name__ == "__main__":
-    register_root()
-    filesystem.start_monitoring()
+    app = Application()
+    app.register_root()
+    filesystem.start_monitoring(app.event_handler)

@@ -2,6 +2,22 @@ import logging
 import time
 from watchdog.observers import Observer
 
+class ChangeType:
+    CREATED = 1
+    DELETED = 2
+    MODIFIED = 3
+    NONE = -1
+
+
+class Change(object):
+
+    def __init__(self, user, dir_name, created_file_name):
+        self.user = user
+        self.dir_name = dir_name
+        self.created_file_name = created_file_name
+        self.type = ChangeType.NONE
+
+
 observer = Observer()
 
 
@@ -12,10 +28,11 @@ def register_dir(dir_to_monitor, event_handler, recursive):
     observer.schedule(event_handler, dir_to_monitor, recursive)
 
 
-def start_monitoring():
+def start_monitoring(event_handler):
     observer.start()
     try:
         while True:
+            event_handler.update()
             time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
