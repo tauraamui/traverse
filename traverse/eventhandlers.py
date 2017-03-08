@@ -1,8 +1,8 @@
 from watchdog.events import FileSystemEventHandler
 import core
-import email
+import travemail
 import utils
-from traverse import users
+import users
 
 
 class EmailNotificationHandler(FileSystemEventHandler):
@@ -16,7 +16,7 @@ class EmailNotificationHandler(FileSystemEventHandler):
                 if dir_name in event.src_path:
                     if user.username != utils.file_owner_name(event.src_path):
                         created_file_name = utils.file_name_in_path(event.src_path)
-                        email.send_new_file_notification(user, dir_name, created_file_name)
+                        travemail.send_new_file_notification(user, dir_name, created_file_name)
 
     def on_deleted(self, event):
         #print event

@@ -1,8 +1,6 @@
 import json
-
 import eventhandlers
 from watchdog.events import FileSystemEventHandler
-
 import filesystem
 
 
