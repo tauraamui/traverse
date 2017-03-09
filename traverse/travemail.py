@@ -3,6 +3,13 @@ import json
 import core
 
 
+def get_email_by_user(user, emails):
+    for email in emails:
+        if email.user.username == user.username:
+            return email
+    return None
+
+
 class Travemail(object):
 
     def __init__(self):
@@ -23,18 +30,18 @@ class Travemail(object):
 
     def send_change_notify_emails(self):
         emails_to_send = []
-        existing_email = False
         for change in self.changes:
-            for email in emails_to_send:
-                if email.user == change.user:
-                    existing_email = True
-                    if change.created_file_name not in email.email_content:
-                        email.email_content.append(change.created_file_name)
-
+            email_to_send = get_email_by_user(change.user, emails_to_send)
+            if email_to_send is not None:
+                email_to_send.file_list.append(change.created_file_name)
+            else:
+                email_to_send = Email(change.user)
+                email_to_send.file_list.append(change.created_file_name)
+                emails_to_send.append(email_to_send)
 
 
 class Email(object):
 
     def __init__(self, user):
         self.user = user
-        self.email_content = []
+        self.file_list = []
