@@ -11,10 +11,10 @@ class ChangeType:
 
 class Change(object):
 
-    def __init__(self, user, dir_name, created_file_name, change_type=None):
-        self.user = user
+    def __init__(self, user_to_notify, dir_name, source_path, change_type=None):
+        self.user_to_notify = user_to_notify
         self.dir_name = dir_name
-        self.created_file_name = created_file_name
+        self.source_path = source_path
         if change_type is None:
             self.type = ChangeType.NONE
         else:

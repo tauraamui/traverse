@@ -15,12 +15,11 @@ class EmailNotificationHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         for user in users.load_all_users(core.DAT_FILE):
+            print user.username
             for dir_name in user.dirs_to_watch:
                 if dir_name in event.src_path:
                     if user.username != utils.file_owner_name(event.src_path):
-                        created_file_name = utils.file_name_in_path(event.src_path)
-                        new_change = Change(user, dir_name, created_file_name, ChangeType.CREATED)
-                        print new_change.type
+                        new_change = Change(user, dir_name, event.src_path, ChangeType.CREATED)
                         self.travemail.cache_change(new_change)
 
     def on_deleted(self, event):

@@ -1,6 +1,7 @@
 import time
 import json
 import core
+from traverse import utils
 
 
 def get_email_by_user(user, emails):
@@ -31,27 +32,34 @@ class Travemail(object):
     def send_change_notify_emails(self):
         emails_to_send = []
         for change in self.changes:
-            email_to_send = get_email_by_user(change.user, emails_to_send)
+            email_to_send = get_email_by_user(change.user_to_notify, emails_to_send)
             if email_to_send is not None:
-                email_to_send.file_list.append(change.created_file_name)
+                email_to_send.change_list.append(change)
             else:
-                email_to_send = Email(change.user)
-                email_to_send.file_list.append(change.created_file_name)
+                email_to_send = Email(change.user_to_notify)
+                email_to_send.change_list.append(change)
                 emails_to_send.append(email_to_send)
 
         for email in emails_to_send:
-            print email.user.username
-            print email.user.email
-            print email.file_list
+            #print email.user.username
+            #print email.user.email
+            print self.create_email_content(email)
+
 
     def create_email_content(self, email):
-        total_content = ""
-        for file in email.file_list:
-            pass
+        data_file = open(core.DAT_FILE)
+        data = json.load(data_file)
+        total_content = "Files have been updated:\n\n"
+        for change in email.change_list:
+            file_name = utils.file_name_in_path(change.source_path)
+            file_owner = utils.file_owner_name(change.source_path)
+            complete_path_to_output = change.source_path.replace(data["root_dir"], "").replace(file_name, "")
+            total_content += "File "+file_name+" has been created in "+complete_path_to_output+" by user "+file_owner+"\n"
+        return total_content
 
 
 class Email(object):
 
     def __init__(self, user):
         self.user = user
-        self.file_list = []
+        self.change_list = []
