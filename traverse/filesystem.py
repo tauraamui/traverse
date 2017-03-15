@@ -11,11 +11,14 @@ class ChangeType:
 
 class Change(object):
 
-    def __init__(self, user, dir_name, created_file_name):
+    def __init__(self, user, dir_name, created_file_name, change_type=None):
         self.user = user
         self.dir_name = dir_name
         self.created_file_name = created_file_name
-        self.type = ChangeType.NONE
+        if change_type is None:
+            self.type = ChangeType.NONE
+        else:
+            self.type = change_type
 
 
 observer = Observer()

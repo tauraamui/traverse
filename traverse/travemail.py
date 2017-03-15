@@ -39,6 +39,16 @@ class Travemail(object):
                 email_to_send.file_list.append(change.created_file_name)
                 emails_to_send.append(email_to_send)
 
+        for email in emails_to_send:
+            print email.user.username
+            print email.user.email
+            print email.file_list
+
+    def create_email_content(self, email):
+        total_content = ""
+        for file in email.file_list:
+            pass
+
 
 class Email(object):
 
