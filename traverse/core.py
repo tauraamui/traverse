@@ -16,6 +16,7 @@ class Application(object):
         with open(DAT_FILE) as data_file:
             data = json.load(data_file)
             filesystem.register_dir(data["root_dir"], self.event_handler, data["watch_subdirs"])
+            data_file.close()
 
 
 if __name__ == "__main__":

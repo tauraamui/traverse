@@ -1,6 +1,8 @@
 import time
 import json
 import core
+import smtplib
+from email.mime.text import MIMEText
 from traverse import utils
 
 
@@ -27,8 +29,13 @@ class Travemail(object):
             self.time_now = time.time()
             self.send_change_notify_emails()
             self.changes = []
+        data_file.close()
 
     def send_change_notify_emails(self):
+        data_file = open(core.DAT_FILE)
+        data = json.load(data_file)
+        email_to_send_from = data["email_to_send_from"]
+        data_file.close()
         emails_to_send = []
         for change in self.changes:
             email_to_send = get_email_by_user(change.user_to_notify, emails_to_send)
@@ -40,9 +47,20 @@ class Travemail(object):
                 emails_to_send.append(email_to_send)
 
         for email in emails_to_send:
-            #print email.user.username
-            #print email.user.email
+            email_content = MIMEText(self.create_email_content(email))
+            email_content["Subject"] = "Krome Transfer - Files update"
+            email_content["From"] = email_to_send_from
+            email_content["To"] = email.user.email
+
+            server = smtplib.SMTP("localhost")
+            server.sendmail(email_to_send_from, email.user.email, email_content.as_string())
+            print "Sent email to: " + email.user.username + " (" + email.user.email + ") " + "from: " + email_to_send_from
+            server.quit()
+            '''
+            print email.user.username
+            print email.user.email
             print self.create_email_content(email)
+            '''
 
 
     def create_email_content(self, email):
