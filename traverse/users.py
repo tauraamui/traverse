@@ -14,9 +14,8 @@ def load_all_users(data_file):
     users = []
     with open(data_file) as data_file:
         data = json.load(data_file)
-        print data
-        new_user = User("", "", [])
         for user_data in data["users"]:
+            new_user = User("", "", [])
             new_user.username = user_data["username"]
             new_user.email = user_data["email"]
             new_user.dirs_to_watch = user_data["dirs_to_watch"]

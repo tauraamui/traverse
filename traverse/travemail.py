@@ -19,7 +19,6 @@ class Travemail(object):
 
     def cache_change(self, change_to_cache):
         self.changes.append(change_to_cache)
-        print self.changes
 
     def update(self):
         data_file = open(core.DAT_FILE)
